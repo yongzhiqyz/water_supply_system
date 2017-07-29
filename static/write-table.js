@@ -82,7 +82,7 @@ function getCustomersDynamic() {
 }
 
 function writeCustomersDynamic(nodes) {
-	json_data = nodes.customers_nodes_list;
+	json_data = nodes.customers_nodes_list;	
 	create_dynamic_table('#qq', json_data, ['node_id', 'demand', 'flow_in', 'flow_satisfied', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
 
@@ -360,14 +360,29 @@ function print_test() {
 
 
 function create_dynamic_table(label_identifier,data, columns) {
+	d3.select(label_identifier).selectAll('table').remove()
 	var table = d3.select(label_identifier).append('table')
+			.style("width", "100%")
+			// .style("height","50px")
+			// .style("overflow", "scroll")
+			// .attr("border", "2")
+
 	var thead = table.append('thead')
-	var	tbody = table.append('tbody');
+	var	tbody = table.append('tbody')
+			// .style("height", "100px")
+			// .style("overflow-y", "scroll", "overflow-x", "scroll");
+
 	
 	thead.append('tr')
-		.selectAll('th')		
+		.selectAll('th')
+		.attr("id", "new_row")
+		.style("padding-top", 40)
+		.style("text-align", "center")		
 		.data(columns).enter()
-		.append('th')	
+		.append('th')
+		.attr("id", "new_row")
+		.style("padding-top", 40)
+		.style("text-align", "center")		
 		.text(function (column) { return column; });
 		
 
@@ -375,18 +390,27 @@ function create_dynamic_table(label_identifier,data, columns) {
 	var rows = tbody.selectAll('tr')
 		.data(data)
 		.enter()
-		.append('tr');
+		.append('tr')
+		.attr("id", "new_row")
+		.style("padding-top", 40)
+		.style("text-align", "center")	;
 
 
 		// create a cell in each row for each column
 	var cells = rows.selectAll('td')
+		.attr("id", "new_cell")	
+		.style("padding-top", 40)
+		.style("text-align", "center")
 		.data(function (row) {
 		    return columns.map(function (column) {
 		      return {column: column, value: row[column]};
 		    });
 		  })
 		  .enter()
-		  .append('td')		  
+		  .append('td')	
+		  .attr("id", "new_cell")
+		  .style("padding-top", 40)
+		  .style("text-align", "center")	  
 		    .text(function (d) { return d.value; });
 
 	return table;
