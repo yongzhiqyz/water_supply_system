@@ -1,0 +1,74 @@
+/*CSS file used in all pages*/
+/*====================== Global ====================== */
+body{
+	font-family: Avenir;
+	margin: 0 auto;
+	padding: 0;
+}
+p {
+	text-align: justify;
+	line-height: 1.4;
+}
+@media (min-width: 768px) {
+.navbar-toggle {display: inline-block;}
+}
+@media (max-width: 992px) {
+    p{font-size: 12px;}
+}
+@media (max-width: 1200px) {
+    p{font-size: 13px;}
+}
+
+hr {
+    height: 2px;
+    background-color:#555;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 75%;
+}
+
+/*To Fix off canvas sliding*/
+.navmenu-fixed-right {left: auto !important;}
+.navbar-toggle {left: auto !important;}
+body.canvas-sliding, body.canvas-slid {left: auto !important;}
+.navmenu, .navbar-offcanvas {
+  width: 225px;
+}
+
+.row { min-width: 800px !important; }
+
+/*section {
+	position: relative;
+}*/
+
+
+.nextSection {
+	position: relative;
+  bottom: 100px;
+  width: 100%;
+  min-width: 800px !important;
+  pointer-events: none;
+}
+.nextSection a {
+   	opacity: 0.5;
+    pointer-events: auto;
+}
+.nextSection a:hover {
+   	opacity: 1;
+}
+
+.navbar-toggle div {
+	display: inline-block;
+}
+
+/*Define 5 column layout for bootstrap*/
+.col-xs-5th {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.col-xs-5th {
+    width: 20%;
+    float: left;
+}
