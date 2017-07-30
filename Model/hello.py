@@ -523,10 +523,10 @@ def get_customers_table_info(network):
             pressure_satisfied.append(0)
     return jsonify(customers_nodes_list = [{'node_id': customers_node.node_id,
                                             'demand': customers_node.demand,
-                                            'flow_in':flow_in[i]*(-1000),                                            
+                                            'flow_in':float("{0:.2f}".format(flow_in[i]*(-1000))),                                            
                                             'flow_satisfied': flow_satisfied[i],
                                             'pressure_satisfied': pressure_satisfied[i],
-                                            'pressure': pressure[i],
+                                            'pressure': float("{0:.2f}".format(pressure[i])),
                                             'min_pressure': customers_node.head
                                             } for i, customers_node in enumerate(customers_nodes)])
  
@@ -551,8 +551,8 @@ def get_sources_table_info(network):
         flow_out.append(float(flow_out_mat))
         pressure.append(float(h[sources_node.node_id-1]))
     return jsonify(sources_nodes_list = [{'node_id': sources_node.node_id,
-                                            'flow_out':flow_out[i]*(1000),                                            
-                                            'pressure': pressure[i],
+                                            'flow_out':float("{0:.2f}".format(flow_out[i]*(1000))),                                            
+                                            'pressure': float("{0:.2f}".format(pressure[i])),
                                             'min_pressure': sources_node.head
                                             } for i, sources_node in enumerate(sources_nodes)])
     
@@ -580,7 +580,7 @@ def get_valves_table_info(network):
                                          'head_id': valves_edge.head_id,
                                          'tail_id': valves_edge.tail_id,
                                          'valve_status': valve_status[i],
-                                         'valve_flow': valve_flow[i]} for i, valves_edge in enumerate(valves_edges)])    
+                                         'valve_flow': float("{0:.2f}".format(valve_flow[i]))} for i, valves_edge in enumerate(valves_edges)])    
     
     
 @app.route('/api/five_highest_pressure/<network>')
@@ -603,7 +603,7 @@ def get_five_lowest_flow_edes(network):
     five_lowest_flow_edges = Edge.query.order_by(Edge.flow.asc()).limit(5)    
     return jsonify(json_list = [five_lowest_flow_edge.serialize for five_lowest_flow_edge in five_lowest_flow_edges])
 
-       
+
 if __name__ == "__main__":
     app.run()    
 
