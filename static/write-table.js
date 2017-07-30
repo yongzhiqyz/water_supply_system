@@ -59,31 +59,34 @@ function getValves() {
 function getValvesDynamic() {
 	var url_valves = "/api/valves_table_info/" + state;
 	d3.json(url_valves, writeValvesDynamic);
+
 }
 
 function writeValvesDynamic(edges) {
 	json_data = edges.valves_edges_list;
-	create_dynamic_table('#qq', json_data, ['edge_id', 'head_id', 'tail_id', 'valve_status']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'valve_status']);
 }
 
 function getSourcesDynamic(){
 	var url_sources = "/api/sources_table_info/" + state;
 	d3.json(url_sources, writeSourcesDynamic);
+
 }
 function writeSourcesDynamic(nodes) {
 	json_data = nodes.sources_nodes_list;
-	create_dynamic_table('#qq', json_data, ['node_id', 'flow_out', 'pressure', 'min_pressure']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'flow_out', 'pressure', 'min_pressure']);
 }
 
 function getCustomersDynamic() {
 	var url_customers = "/api/customers_table_info/" + state;
 	d3.json(url_customers, writeCustomersDynamic);
 
+
 }
 
 function writeCustomersDynamic(nodes) {
 	json_data = nodes.customers_nodes_list;	
-	create_dynamic_table('#qq', json_data, ['node_id', 'demand', 'flow_in', 'flow_satisfied', 'pressure', 'min_pressure', 'pressure_satisfied']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'flow_in', 'flow_satisfied', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
 
 function getKeyNodes() {
@@ -362,27 +365,28 @@ function print_test() {
 function create_dynamic_table(label_identifier,data, columns) {
 	d3.select(label_identifier).selectAll('table').remove()
 	var table = d3.select(label_identifier).append('table')
-			.style("width", "100%")
-			// .style("height","50px")
-			// .style("overflow", "scroll")
-			// .attr("border", "2")
-
+			.style("width", "100%");
 	var thead = table.append('thead')
+
 	var	tbody = table.append('tbody')
 			// .style("height", "100px")
 			// .style("overflow-y", "scroll", "overflow-x", "scroll");
-
+	
+	var columns_with_space = new Array(columns.length)
+		for (i = 0; i < columns.length; i++) {
+		columns_with_space[i] = columns[i].replace('_',' ')
+	}
 	
 	thead.append('tr')
 		.selectAll('th')
-		.attr("id", "new_row")
-		.style("padding-top", 40)
+		.style("padding-top", 10)
+		.style("padding-left",2)
 		.style("text-align", "center")		
-		.data(columns).enter()
+		.data(columns_with_space).enter()
 		.append('th')
-		.attr("id", "new_row")
-		.style("padding-top", 40)
-		.style("text-align", "center")		
+		.style("padding-top", 10)
+		.style("padding-left",2)
+		.style("text-align", "center")
 		.text(function (column) { return column; });
 		
 
@@ -392,14 +396,16 @@ function create_dynamic_table(label_identifier,data, columns) {
 		.enter()
 		.append('tr')
 		.attr("id", "new_row")
-		.style("padding-top", 40)
+		.style("padding-top", 10)
+		.style("padding-left",2)
 		.style("text-align", "center")	;
 
 
 		// create a cell in each row for each column
 	var cells = rows.selectAll('td')
 		.attr("id", "new_cell")	
-		.style("padding-top", 40)
+		.style("padding-top", 10)
+		.style("padding-left",2)
 		.style("text-align", "center")
 		.data(function (row) {
 		    return columns.map(function (column) {
@@ -409,7 +415,8 @@ function create_dynamic_table(label_identifier,data, columns) {
 		  .enter()
 		  .append('td')	
 		  .attr("id", "new_cell")
-		  .style("padding-top", 40)
+		  .style("padding-top", 10)
+		  .style("padding-left",2)		
 		  .style("text-align", "center")	  
 		    .text(function (d) { return d.value; });
 
