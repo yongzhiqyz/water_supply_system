@@ -80,14 +80,35 @@ function writeSourcesDynamic(nodes) {
 function getCustomersDynamic() {
 	var url_customers = "/api/customers_table_info/" + state;
 	d3.json(url_customers, writeCustomersDynamic);
-
-
 }
 
 function writeCustomersDynamic(nodes) {
 	json_data = nodes.customers_nodes_list;	
 	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'flow_in', 'flow_satisfied', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
+
+
+// getKeyNodesDynamic
+function getKeyNodesDynamic() {
+	var url_customers = "/api/nodes/" + state;
+	d3.json(url_customers, writeKeyNodesDynamic);
+}
+
+function writeKeyNodesDynamic(nodes) {
+	json_data = nodes.json_list;	
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
+}
+
+function getKeyEdgesDynamic() {
+	var url_customers = "/api/edges/" + state;
+	d3.json(url_customers, writeKeyEdgesDynamic);
+}
+
+function writeKeyEdgesDynamic(nodes) {
+	json_data = nodes.json_list;	
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+}
+
 
 function getKeyNodes() {
 	document.getElementById("top-five-flow").click();
