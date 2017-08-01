@@ -89,12 +89,12 @@ function writeCustomersDynamic(nodes) {
 
 
 // getKeyNodesDynamic
-function getKeyNodesDynamic() {
+function getNodesDynamic() {
 	var url_customers = "/api/nodes/" + state;
-	d3.json(url_customers, writeKeyNodesDynamic);
+	d3.json(url_customers, writeNodesDynamic);
 }
 
-function writeKeyNodesDynamic(nodes) {
+function writeNodesDynamic(nodes) {
 	json_data = nodes.json_list;
 	for (i =0; i < json_data.length; i++) {
 		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
@@ -102,12 +102,12 @@ function writeKeyNodesDynamic(nodes) {
 	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
 }
 
-function getKeyEdgesDynamic() {
+function getEdgesDynamic() {
 	var url_customers = "/api/edges/" + state;
-	d3.json(url_customers, writeKeyEdgesDynamic);
+	d3.json(url_customers, writeEdgesDynamic);
 }
 
-function writeKeyEdgesDynamic(nodes) {
+function writeEdgesDynamic(nodes) {
 	json_data = nodes.json_list;
 	for (i =0; i < json_data.length; i++) {
 		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
@@ -447,58 +447,130 @@ function create_dynamic_table(label_identifier,data, columns) {
 		    .text(function (d) { return d.value; });
 
 		 console.log(cells)
-	for (i = 0; i < cells.length; i++) {
-		for (j = 0; j < cells[i].length; j++) {
-			if (cells[i][j].__data__.column == 'valve_status'){
-				if (cells[i][j].__data__.value == 1){
-					cells[i][j].innerHTML = "open"
-					cells[i][j].className ="label-success"
-				} else {
-					cells[i][j].innerHTML = "closed"
-					cells[i][j].className ="label-primary"
-				}
-			}
+		 var cell_select = cells.filter(function (d) {return d.column == "valve_status" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ok-circle")
+		    .attr("style", "color:#5cb85c");
+		var cell_select = cells.filter(function (d) {return d.column == "valve_status" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ban-circle")
+		    .attr("style", "color:#d9534f");
 
-			if (cells[i][j].__data__.column == 'pressure_satisfied'){
-				if (cells[i][j].__data__.value == 1){
-					cells[i][j].innerHTML = "satisfied"
-				} else {
-					cells[i][j].innerHTML = "no"
-				}
-			}
+		var cell_select = cells.filter(function (d) {return d.column == "pressure_satisfied" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ok-circle")
+		    .attr("style", "color:#5cb85c");
+		var cell_select = cells.filter(function (d) {return d.column == "pressure_satisfied" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ban-circle")
+		    .attr("style", "color:#d9534f");
 
-			if (cells[i][j].__data__.column == 'edge_type'){
-				if (cells[i][j].__data__.value == 1){
-					cells[i][j].innerHTML = "pump"
-					cells[i][j].className ="label-warning"
-				} else if (cells[i][j].__data__.value == 2){
-					cells[i][j].innerHTML = "valve"
-					cells[i][j].className ="label-success"
-				} else {
-					cells[i][j].innerHTML = "pipe"
-					cells[i][j].className ="label-primary"
-				}
-			}
 
-			if (cells[i][j].__data__.column == 'node_type'){
-				if (cells[i][j].__data__.value == 1){
-					cells[i][j].innerHTML = "customer"
-					cells[i][j].className ="label-danger"
-					console.log(cells[i][j])
-				} else if (cells[i][j].__data__.value == 2){
-					cells[i][j].innerHTML = "source"
-					cells[i][j].className ="label-warning"
-				} else if (cells[i][j].__data__.value == 3){
-					cells[i][j].innerHTML = "tank"
-					cells[i][j].className ="label-success"
-				} else {
-					cells[i][j].innerHTML = "junction"
-					cells[i][j].className ="label-primary"
-				}
-			}
+		var cell_select = cells.filter(function (d) {return d.column == "edge_type" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		.attr("class", "label label-warning")
+		.text("pump");
+		var cell_select = cells.filter(function (d) {return d.column == "edge_type" ? this: null})
+		 .filter(function (d) {return d.value == 2 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-success")
+		 .text("valve");	
+		var cell_select = cells.filter(function (d) {return d.column == "edge_type" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-primary")
+		 .text("pipe");
 
-		}
-	}
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		.attr("class", "label label-danger")
+		.text("customer");
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 2 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-warning")
+		 .text("source");	
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 3 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-success")
+		 .text("tank");
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-primary")
+		 .text("junction");
+
+
+	// for (i = 0; i < cells.length; i++) {
+	// 	for (j = 0; j < cells[i].length; j++) {
+	// 		if (cells[i][j].__data__.column == 'valve_status'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "open"
+	// 				cells[i][j].className ="label-success"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "closed"
+	// 				cells[i][j].className ="label-primary"
+	// 			}
+	// 		}
+
+	// 		if (cells[i][j].__data__.column == 'pressure_satisfied'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "satisfied"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "no"
+	// 			}
+	// 		}
+
+	// 		if (cells[i][j].__data__.column == 'edge_type'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "pump"
+	// 				cells[i][j].className ="label-warning"
+	// 			} else if (cells[i][j].__data__.value == 2){
+	// 				cells[i][j].innerHTML = "valve"
+	// 				cells[i][j].className ="label-success"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "pipe"
+	// 				cells[i][j].className ="label-primary"
+	// 			}
+	// 		}
+
+	// 		if (cells[i][j].__data__.column == 'node_type'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "customer"
+	// 				cells[i][j].className ="label-danger"
+	// 				console.log(cells[i][j])
+	// 			} else if (cells[i][j].__data__.value == 2){
+	// 				cells[i][j].innerHTML = "source"
+	// 				cells[i][j].className ="label-warning"
+	// 			} else if (cells[i][j].__data__.value == 3){
+	// 				cells[i][j].innerHTML = "tank"
+	// 				cells[i][j].className ="label-success"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "junction"
+	// 				cells[i][j].className ="label-primary"
+	// 			}
+	// 		}
+
+	// 	}
+	// }
 
 	return table;
 }
