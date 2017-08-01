@@ -323,7 +323,7 @@ def get_max_flow(network_id):
     edges_data = Edge.query.all()
     for i, item in enumerate(gap_edge):
         edges_data[i].gap = item
-    
+    db.session.commit()
     edges = []
     for i, item in enumerate(q):
         edge = {'edge_id': i + 1, 'flow': item.tolist()[0][0]}
@@ -361,6 +361,7 @@ def get_imaginary_pressure(network_id):
     edges_data = Edge.query.all()
     for i, item in enumerate(gap_edge):
         edges_data[i].gap = item
+    db.session.commit()
         
     nodes = []
     for i, item in enumerate(h):
@@ -432,7 +433,7 @@ def get_iterative(network_id, iter):
     edges_data = Edge.query.all()
     for i, item in enumerate(gap_edge):
         edges_data[i].gap = item
-
+    db.session.commit()
 
     edges_data = Edge.query.all()
     edges = []
