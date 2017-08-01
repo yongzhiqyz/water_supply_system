@@ -167,6 +167,18 @@ function writeKeyEdgesDynamicHighest(nodes) {
 	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
 }
 
+function get_specified_node_dynamic() {
+	var node_id = document.getElementById('search_dynamic_node_id').value
+	var url_specified_node= "/api/nodes/" + state + "/" + node_id;
+	d3.json(url_specified_node, writeNodesDynamic);
+}
+
+
+function get_specified_edge_dynamic() {
+	var edge_id = document.getElementById('search_dynamic_edge_id').value
+	var url_specified_edge= "/api/edges/" + state + "/" + edge_id;
+	d3.json(url_specified_edge, writeEdgesDynamic);
+}
 
 
 
