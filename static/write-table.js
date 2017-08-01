@@ -74,20 +74,113 @@ function getSourcesDynamic(){
 }
 function writeSourcesDynamic(nodes) {
 	json_data = nodes.sources_nodes_list;
-	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'flow_out', 'pressure', 'min_pressure']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'flow_out', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
 
 function getCustomersDynamic() {
 	var url_customers = "/api/customers_table_info/" + state;
 	d3.json(url_customers, writeCustomersDynamic);
-
-
 }
 
 function writeCustomersDynamic(nodes) {
 	json_data = nodes.customers_nodes_list;	
 	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'flow_in', 'flow_satisfied', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
+
+
+// getKeyNodesDynamic
+function getNodesDynamic() {
+	var url_customers = "/api/nodes/" + state;
+	d3.json(url_customers, writeNodesDynamic);
+}
+
+function writeNodesDynamic(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}	
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
+}
+
+function getKeyNodesDynamicLowest() {
+	var url_customers = "/api/five_lowest_pressure/" + state;
+	d3.json(url_customers, writeKeyNodesDynamicLowest);
+}
+
+function writeKeyNodesDynamicLowest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}	
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
+}
+
+function getKeyNodesDynamicHighest() {
+	var url_customers = "/api/five_highest_pressure/" + state;
+	d3.json(url_customers, writeKeyNodesDynamicHighest);
+}
+
+function writeKeyNodesDynamicHighest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}	
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
+}
+
+function getEdgesDynamic() {
+	var url_customers = "/api/edges/" + state;
+	d3.json(url_customers, writeEdgesDynamic);
+}
+
+function writeEdgesDynamic(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+	}			
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+}
+
+function getKeyEdgesDynamicLowest() {
+	var url_customers = "/api/five_lowest_flow/" + state;
+	d3.json(url_customers, writeKeyEdgesDynamicLowest);
+}
+
+function writeKeyEdgesDynamicLowest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+	}			
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+}
+
+function getKeyEdgesDynamicHighest() {
+	var url_customers = "/api/five_highest_flow/" + state;
+	d3.json(url_customers, writeKeyEdgesDynamicHighest);
+}
+
+function writeKeyEdgesDynamicHighest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+	}			
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+}
+
+function get_specified_node_dynamic() {
+	var node_id = document.getElementById('search_dynamic_node_id').value
+	var url_specified_node= "/api/nodes/" + state + "/" + node_id;
+	d3.json(url_specified_node, writeNodesDynamic);
+}
+
+
+function get_specified_edge_dynamic() {
+	var edge_id = document.getElementById('search_dynamic_edge_id').value
+	var url_specified_edge= "/api/edges/" + state + "/" + edge_id;
+	d3.json(url_specified_edge, writeEdgesDynamic);
+}
+
+
 
 function getKeyNodes() {
 	document.getElementById("top-five-flow").click();
@@ -316,6 +409,7 @@ function writeTopFiveFlowTable(edges){
 	    d3.select("#top_five_flow-tail_id" + i).text("");
 	    d3.select("#top_five_flow-flow" + i).text("");
 	    d3.select("#top_five_flow-type" + i).selectAll("span").remove();
+	    d3.select("#top_five_flow-gap" + i).text("");
 	    // d3.select("#top_five_pressure-satisfied" + i).selectAll("span").remove();
 	}
 
@@ -323,7 +417,8 @@ function writeTopFiveFlowTable(edges){
 		d3.select("#top_five_flow-edge_id" + i).text(top_five_flow_edges_list[i-1].edge_id);
 	    d3.select("#top_five_flow-head_id" + i).text(top_five_flow_edges_list[i-1].head_id);
 	    d3.select("#top_five_flow-tail_id" + i).text(top_five_flow_edges_list[i-1].tail_id);
-	    d3.select("#top_five_flow-flow" + i).text(parseFloat(top_five_flow_edges_list[0].flow).toFixed(2));	   
+	    d3.select("#top_five_flow-flow" + i).text(parseFloat(top_five_flow_edges_list[i-1].flow).toFixed(2));	   
+	    d3.select("#top_five_flow-gap" + i).text(parseFloat(top_five_flow_edges_list[i-1].gap).toFixed(2));
 	    
 
 	    var edge_type = top_five_flow_edges_list[i-1].edge_type;
@@ -365,12 +460,11 @@ function print_test() {
 function create_dynamic_table(label_identifier,data, columns) {
 	d3.select(label_identifier).selectAll('table').remove()
 	var table = d3.select(label_identifier).append('table')
-			.style("width", "100%");
+			.style("width", "100%")
+			.attr("class", "table-striped");
 	var thead = table.append('thead')
 
 	var	tbody = table.append('tbody')
-			// .style("height", "100px")
-			// .style("overflow-y", "scroll", "overflow-x", "scroll");
 	
 	var columns_with_space = new Array(columns.length)
 		for (i = 0; i < columns.length; i++) {
@@ -387,8 +481,7 @@ function create_dynamic_table(label_identifier,data, columns) {
 		.style("padding-top", 10)
 		.style("padding-left",2)
 		.style("text-align", "center")
-		.text(function (column) { return column; });
-		
+		.text(function (column) { return column; });		
 
 		// create a row for each object in the data
 	var rows = tbody.selectAll('tr')
@@ -399,7 +492,6 @@ function create_dynamic_table(label_identifier,data, columns) {
 		.style("padding-top", 10)
 		.style("padding-left",2)
 		.style("text-align", "center")	;
-
 
 		// create a cell in each row for each column
 	var cells = rows.selectAll('td')
@@ -415,10 +507,136 @@ function create_dynamic_table(label_identifier,data, columns) {
 		  .enter()
 		  .append('td')	
 		  .attr("id", "new_cell")
-		  .style("padding-top", 10)
+		  .style("padding-top", 15)
 		  .style("padding-left",2)		
 		  .style("text-align", "center")	  
 		    .text(function (d) { return d.value; });
+
+		 console.log(cells)
+		 var cell_select = cells.filter(function (d) {return d.column == "valve_status" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ok-circle")
+		    .attr("style", "color:#5cb85c");
+		var cell_select = cells.filter(function (d) {return d.column == "valve_status" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ban-circle")
+		    .attr("style", "color:#d9534f");
+
+		var cell_select = cells.filter(function (d) {return d.column == "pressure_satisfied" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ok-circle")
+		    .attr("style", "color:#5cb85c");
+		var cell_select = cells.filter(function (d) {return d.column == "pressure_satisfied" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		    .attr("class", "control glyphicon glyphicon-ban-circle")
+		    .attr("style", "color:#d9534f");
+
+
+		var cell_select = cells.filter(function (d) {return d.column == "edge_type" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		.attr("class", "label label-warning")
+		.text("pump");
+		var cell_select = cells.filter(function (d) {return d.column == "edge_type" ? this: null})
+		 .filter(function (d) {return d.value == 2 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-success")
+		 .text("valve");	
+		var cell_select = cells.filter(function (d) {return d.column == "edge_type" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-primary")
+		 .text("pipe");
+
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 1 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		.attr("class", "label label-danger")
+		.text("customer");
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 2 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-warning")
+		 .text("source");	
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 3 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-success")
+		 .text("tank");
+		var cell_select = cells.filter(function (d) {return d.column == "node_type" ? this: null})
+		 .filter(function (d) {return d.value == 0 ? this: null})
+		 .text("")
+		 .append("xhtml:span")
+		 .attr("class", "label label-primary")
+		 .text("junction");
+
+
+	// for (i = 0; i < cells.length; i++) {
+	// 	for (j = 0; j < cells[i].length; j++) {
+	// 		if (cells[i][j].__data__.column == 'valve_status'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "open"
+	// 				cells[i][j].className ="label-success"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "closed"
+	// 				cells[i][j].className ="label-primary"
+	// 			}
+	// 		}
+
+	// 		if (cells[i][j].__data__.column == 'pressure_satisfied'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "satisfied"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "no"
+	// 			}
+	// 		}
+
+	// 		if (cells[i][j].__data__.column == 'edge_type'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "pump"
+	// 				cells[i][j].className ="label-warning"
+	// 			} else if (cells[i][j].__data__.value == 2){
+	// 				cells[i][j].innerHTML = "valve"
+	// 				cells[i][j].className ="label-success"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "pipe"
+	// 				cells[i][j].className ="label-primary"
+	// 			}
+	// 		}
+
+	// 		if (cells[i][j].__data__.column == 'node_type'){
+	// 			if (cells[i][j].__data__.value == 1){
+	// 				cells[i][j].innerHTML = "customer"
+	// 				cells[i][j].className ="label-danger"
+	// 				console.log(cells[i][j])
+	// 			} else if (cells[i][j].__data__.value == 2){
+	// 				cells[i][j].innerHTML = "source"
+	// 				cells[i][j].className ="label-warning"
+	// 			} else if (cells[i][j].__data__.value == 3){
+	// 				cells[i][j].innerHTML = "tank"
+	// 				cells[i][j].className ="label-success"
+	// 			} else {
+	// 				cells[i][j].innerHTML = "junction"
+	// 				cells[i][j].className ="label-primary"
+	// 			}
+	// 		}
+
+	// 	}
+	// }
 
 	return table;
 }

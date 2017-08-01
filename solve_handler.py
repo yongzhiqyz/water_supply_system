@@ -52,7 +52,10 @@ def solve_imaginary_pressure(A, L1, dh_max, hc, pump_head_list, qq):
     prob=Problem(obj,constraints)
     prob.solve(verbose=True, solver=MOSEK)
 
-    return obj.value, h.value
+    hh = h.value
+    gap_edge = A.T*hh-np.diag(L1.A1)*np.power(qq,2)+dh_max
+
+    return obj.value, h.value, gap_edge
 
 def solve_max_flow(A, L1, dh_max, d, hh):
     num_e = A.shape[1]
@@ -76,5 +79,7 @@ def solve_max_flow(A, L1, dh_max, d, hh):
 
     prob=Problem(obj,constraints)
     prob.solve(verbose=True, solver=MOSEK)
+    qq = q.value
+    gap_edge = A.T*hh-np.diag(L1.A1)*np.power(qq,2)+dh_max
 
-    return obj.value, q.value
+    return obj.value, q.value, gap_edge
