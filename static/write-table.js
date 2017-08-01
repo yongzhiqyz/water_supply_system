@@ -137,8 +137,9 @@ function writeEdgesDynamic(nodes) {
 	json_data = nodes.json_list;
 	for (i =0; i < json_data.length; i++) {
 		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+		json_data[i].gap = parseFloat(json_data[i].gap).toFixed(2) 
 	}			
-	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'gap','edge_type']);
 }
 
 function getKeyEdgesDynamicLowest() {
@@ -150,8 +151,9 @@ function writeKeyEdgesDynamicLowest(nodes) {
 	json_data = nodes.json_list;
 	for (i =0; i < json_data.length; i++) {
 		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+		json_data[i].gap = parseFloat(json_data[i].gap).toFixed(2) 
 	}			
-	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow','gap', 'edge_type']);
 }
 
 function getKeyEdgesDynamicHighest() {
@@ -163,8 +165,9 @@ function writeKeyEdgesDynamicHighest(nodes) {
 	json_data = nodes.json_list;
 	for (i =0; i < json_data.length; i++) {
 		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+		json_data[i].gap = parseFloat(json_data[i].gap).toFixed(2) 
 	}			
-	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'gap','edge_type']);
 }
 
 function get_specified_node_dynamic() {
