@@ -102,6 +102,32 @@ function writeNodesDynamic(nodes) {
 	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
 }
 
+function getKeyNodesDynamicLowest() {
+	var url_customers = "/api/five_lowest_pressure/" + state;
+	d3.json(url_customers, writeKeyNodesDynamicLowest);
+}
+
+function writeKeyNodesDynamicLowest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}	
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
+}
+
+function getKeyNodesDynamicHighest() {
+	var url_customers = "/api/five_highest_pressure/" + state;
+	d3.json(url_customers, writeKeyNodesDynamicHighest);
+}
+
+function writeKeyNodesDynamicHighest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}	
+	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'node_name', 'head', 'node_type', 'pressure']);
+}
+
 function getEdgesDynamic() {
 	var url_customers = "/api/edges/" + state;
 	d3.json(url_customers, writeEdgesDynamic);
@@ -114,6 +140,34 @@ function writeEdgesDynamic(nodes) {
 	}			
 	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
 }
+
+function getKeyEdgesDynamicLowest() {
+	var url_customers = "/api/five_lowest_flow/" + state;
+	d3.json(url_customers, writeKeyEdgesDynamicLowest);
+}
+
+function writeKeyEdgesDynamicLowest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+	}			
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+}
+
+function getKeyEdgesDynamicHighest() {
+	var url_customers = "/api/five_highest_flow/" + state;
+	d3.json(url_customers, writeKeyEdgesDynamicHighest);
+}
+
+function writeKeyEdgesDynamicHighest(nodes) {
+	json_data = nodes.json_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow = parseFloat(json_data[i].flow).toFixed(2) 
+	}			
+	create_dynamic_table('#dynamic_table_label', json_data, ['edge_id', 'head_id', 'tail_id', 'flow', 'edge_type']);
+}
+
+
 
 
 function getKeyNodes() {
