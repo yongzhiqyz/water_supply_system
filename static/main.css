@@ -4,6 +4,7 @@ body{
 	font-family: Avenir;
 	margin: 0 auto;
 	padding: 0;
+  overflow-y:scroll!important;
 }
 p {
 	text-align: justify;
@@ -32,7 +33,7 @@ hr {
 .navbar-toggle {left: auto !important;}
 body.canvas-sliding, body.canvas-slid {left: auto !important;}
 .navmenu, .navbar-offcanvas {
-  width: 225px;
+  width: 500px;
 }
 
 .row { min-width: 800px !important; }

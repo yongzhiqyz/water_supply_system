@@ -2,10 +2,11 @@
 <head>
 	<title>Page Title</title>	
 	<style> /* set the CSS */
-	.modal-backdrop
-{
-    opacity:0 !important;
-}
+
+	#table_corr {
+	    font-size: 11px;
+	    cursor: pointer;
+	}
 	.line path { 
 	    stroke: orange;
 	    stroke-width: 2;
@@ -77,6 +78,9 @@
 	<script src="{{ url_for('static', filename='scrolling-nav.js') }}"></script>
 	<link href="{{ url_for('static', filename='scrolling-nav.css') }}" rel="stylesheet" type="text/css" />
 
+	<script src="{{ url_for('static', filename='jasny-bootstrap.min.js') }}"></script>
+	<link href="{{ url_for('static', filename='jasny-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+
 	<!-- font -->
 	<link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css" />
 
@@ -85,9 +89,16 @@
 
 	<div w3-include-html="{{ url_for('static', filename='navbar.html') }}"></div>
 	
+	<!-- Off Canvas Menu -->
+    <nav id="offCanvasMenu" class="navmenu navmenu-default navmenu-fixed-right offcanvas" role="navigation" style="padding-left:-600">
+      <a class="navmenu-brand" href="./index.html"><b>Seeing Theory</b></a>
+      
+    </nav>
+    
 	<!-- Intro Section -->
 	<section id="intro" class="intro-section">
 		<div class="container">
+
 			<div class="row">
 				<div class="col-xs-12">
 					<h1>The Network</h1>
@@ -95,44 +106,119 @@
 				</div>
 			</div>
 
-			<svg id="graph-canvas" width="800" height="600"></svg>
+			<div class="row" style="padding-top:40px">							
+				<div class="col-xs-8">
+					<svg id="graph-canvas" width="750" height="500"></svg>
+				</div>
+				<div class="col-xs-4">
 
-			<div id="option" class="row">
-				<div class="col-xs-2"></div>
-				<div class="col-xs-6">
-					<!-- <input name="big"
-					type="button"
-					class="btn btn-default"
-					value="Big"
-					onclick="initialize(2)" > -->
+						<form>		
+							<label class="radio-inline">
+							  <input id="top-five-flow" type="radio" name="optradio" onclick = "get_top_five_highest_flow_edges()">Highest Flow
+							</label>
+							<label class="radio-inline">
+							  <input type="radio" name="optradio" onclick = "get_top_five_lowest_flow_edges()">Lowest Flow
+							</label>
+						</flow>
+						
+						<div class="input-group">
+							<input id="search_edge_id" type="text" class="form-control" placeholder="Edge id">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button" onclick="get_specified_edge()">Go!</button>
+							</span>
+						</div>
+					
+
+					<table class="table">
+						<thead>
+							<tr>
+								<th style="text-align:center">#</th>
+								<th style="text-align:center">id</th>
+								<th style="text-align:center">Head id</th>
+								<th style="text-align:center">Tail id</th>
+								<th style="text-align:center">Type</th>
+								<th style="text-align:center">Flow</th>
+								<th style="text-align:center">No Gap?</th>				
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="tr-id-1" class="tr-class-1">
+								<th style="text-align:center">1</th>
+								<td id="top_five_flow-edge_id1"_ style="text-align:center"></td>					
+								<td id="top_five_flow-head_id1" style="text-align:center"></td>
+								<td id="top_five_flow-tail_id1" style="text-align:center"></td>
+								<td id="top_five_flow-type1" style="text-align:center"></td>		
+								<td id="top_five_flow-flow1" style="text-align:center"></td>	
+								<td id="top_five_flow-gap1" style="text-align:center"></td>								
+								
+							</tr>
+							<tr id="tr-id-2" class="tr-class-2">
+								<th style="text-align:center">2</th>
+								<td id="top_five_flow-edge_id2" style="text-align:center"></td>					
+								<td id="top_five_flow-head_id2" style="text-align:center"></td>
+								<td id="top_five_flow-tail_id2" style="text-align:center"></td>
+								<td id="top_five_flow-type2" style="text-align:center"></td>		
+								<td id="top_five_flow-flow2" style="text-align:center"></td>	
+								<td id="top_five_flow-gap2" style="text-align:center"></td>									
+							</tr>
+							<tr id="tr-id-3" class="tr-class-3">
+								<th style="text-align:center">3</th>	
+								<td id="top_five_flow-edge_id3" style="text-align:center"></td>					
+								<td id="top_five_flow-head_id3" style="text-align:center"></td>
+								<td id="top_five_flow-tail_id3" style="text-align:center"></td>
+								<td id="top_five_flow-type3" style="text-align:center"></td>		
+								<td id="top_five_flow-flow3" style="text-align:center"></td>	
+								<td id="top_five_flow-gap3" style="text-align:center"></td>								
+							</tr>
+							<tr id="tr-id-4" class="tr-class-4">
+								<th style="text-align:center">4</th>	
+								<td id="top_five_flow-edge_id4" style="text-align:center"></td>					
+								<td id="top_five_flow-head_id4" style="text-align:center"></td>
+								<td id="top_five_flow-tail_id4" style="text-align:center"></td>
+								<td id="top_five_flow-type4" style="text-align:center"></td>		
+								<td id="top_five_flow-flow4" style="text-align:center"></td>	
+								<td id="top_five_flow-gap4" style="text-align:center"></td>									
+							</tr>
+							<tr id="tr-id-5" class="tr-class-5">
+								<th style="text-align:center">5</th>	
+								<td id="top_five_flow-edge_id5" style="text-align:center"></td>					
+								<td id="top_five_flow-head_id5" style="text-align:center"></td>
+								<td id="top_five_flow-tail_id5" style="text-align:center"></td>
+								<td id="top_five_flow-type5" style="text-align:center"></td>		
+								<td id="top_five_flow-flow5" style="text-align:center"></td>	
+								<td id="top_five_flow-gap5" style="text-align:center"></td>								
+							</tr>
+						</tbody>
+					</table>
 					<div class="btn-group">
-					<input name="small"
-					type="button"
-					class="btn btn-default"
-					value="Small"
-					onclick="initialize(1)" >
+						<input name="small"
+						type="button"
+						class="btn btn-default"
+						value="Small"
+						onclick="initialize(1)" >
 
-					<input name="showdirection"
-					id = "direction-button"
-					type="button"
-					class="btn btn-danger"
-					style="width: 70px !important;"
-					value="Pause"
-					onclick="loopAnimation()" >
+						<input name="showdirection"
+						id = "direction-button"
+						type="button"
+						class="btn btn-danger"
+						style="width: 70px !important;"
+						value="Pause"
+						onclick="loopAnimation()" >
 
-					<input name="predirection"
-					type="button"
-					class="btn btn-default"
-					value="Predirection"
-					onclick="predirection()" >
+						<input name="predirection"
+						type="button"
+						class="btn btn-default"
+						value="Predirection"
+						onclick="getNewDirection()" >
 
-					<input name="updateButton" 
-					type="button" 
-					class="btn btn-default"
-					value="Imaginary" 
-					onclick="updateData()" />
+						<input name="updateButton"
+						style="border-radius: 0px 4px 4px 0px;" 
+						type="button" 
+						class="btn btn-default"
+						value="Imaginary" 
+						onclick="updateData()" />
 
-					<input name="updateButton1" 
+					<!-- <input name="updateButton1" 
 					type="button" 
 					class="btn btn-default"
 					value="Pressure" 
@@ -143,17 +229,30 @@
 					class="btn btn-default"
 					value="Max Flow" 
 					onclick="updateData2()" />
+					</div> -->
+
+					<div class="col-xs-6">
+						<div class="input-group">
+							<input id="iteration" type="text" class="form-control" placeholder="Iteration">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button" onclick="updateData3()">Go!</button>
+							</span>
+						</div>
 					</div>
+				</div>
+			</div>
+			<div id="option" class="row">
+				<div class="col-xs-2"></div>
+				<div class="col-xs-6">
+					<!-- <input name="big"
+					type="button"
+					class="btn btn-default"
+					value="Big"
+					onclick="initialize(2)" > -->
+					
 					
 				</div>
-				<div class="col-xs-2">
-					<div class="input-group">
-						<input id="iteration" type="text" class="form-control" placeholder="Iteration">
-						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" onclick="updateData3()">Go!</button>
-						</span>
-					</div>
-				</div>
+				
 				<div class="col-xs-2"></div>
 			</div>			
 		</div>
@@ -508,47 +607,49 @@
 						<tbody>
 							<tr id="tr-id-1" class="tr-class-1">
 								<th style="text-align:center">1</th>
-								<td id="top_five_pressure-id1" style="text-align:center"></td>											
+								<td id="top_five_pressure-id1" style="text-align:center"></td>				
+								<td id="top_five_pressure-type1" style="text-align:center"></td>												
 								<td id="top_five_pressure-min_pressure1" style="text-align:center"></td>	
 								<td id="top_five_pressure-pressure1" style="text-align:center"></td>
 								<td id="top_five_pressure-satisfied1" style="text-align:center"></td>
-								<td id="top_five_pressure-type1" style="text-align:center"></td>	
 														
 							</tr>
 							<tr id="tr-id-2" class="tr-class-2">
 								<th style="text-align:center">2</th>
-								<td id="top_five_pressure-id2" style="text-align:center"></td>												
+								<td id="top_five_pressure-id2" style="text-align:center"></td>		
+								<td id="top_five_pressure-type2" style="text-align:center"></td>										
 								<td id="top_five_pressure-min_pressure2" style="text-align:center"></td>	
 								<td id="top_five_pressure-pressure2" style="text-align:center"></td>
 								<td id="top_five_pressure-satisfied2" style="text-align:center"></td>
-								<td id="top_five_pressure-type2" style="text-align:center"></td>
 								
 							</tr>
 							<tr id="tr-id-3" class="tr-class-3">
 								<th style="text-align:center">3</th>
-								<td id="top_five_pressure-id3" style="text-align:center"></td>												
+								<td id="top_five_pressure-id3" style="text-align:center"></td>		
+
+								<td id="top_five_pressure-type3" style="text-align:center"></td>										
 								<td id="top_five_pressure-min_pressure3" style="text-align:center"></td>	
 								<td id="top_five_pressure-pressure3" style="text-align:center"></td>
 								<td id="top_five_pressure-satisfied3" style="text-align:center"></td>
-								<td id="top_five_pressure-type3" style="text-align:center"></td>								
+								
 	
 							</tr>
 							<tr id="tr-id-4" class="tr-class-4">
 								<th style="text-align:center">4</th>
-								<td id="top_five_pressure-id4" style="text-align:center"></td>														
+								<td id="top_five_pressure-id4" style="text-align:center"></td>				
+								<td id="top_five_pressure-type4" style="text-align:center"></td>												
 								<td id="top_five_pressure-min_pressure4" style="text-align:center"></td>	
 								<td id="top_five_pressure-pressure4" style="text-align:center"></td>
 								<td id="top_five_pressure-satisfied4" style="text-align:center"></td>
-								<td id="top_five_pressure-type4" style="text-align:center"></td>	
 														
 							</tr>
 							<tr id="tr-id-5" class="tr-class-5">
 								<th style="text-align:center">5</th>
-								<td id="top_five_pressure-id5" style="text-align:center"></td>																
+								<td id="top_five_pressure-id5" style="text-align:center"></td>				
+								<td id="top_five_pressure-type5" style="text-align:center"></td>												
 								<td id="top_five_pressure-min_pressure5" style="text-align:center"></td>	
 								<td id="top_five_pressure-pressure5" style="text-align:center"></td>
 								<td id="top_five_pressure-satisfied5" style="text-align:center"></td>
-								<td id="top_five_pressure-type5" style="text-align:center"></td>
 														
 							</tr>
 						</tbody>
@@ -683,7 +784,7 @@
 								<th style="text-align:center">Tail id</th>
 								<th style="text-align:center">Type</th>
 								<th style="text-align:center">Flow</th>
-								<th style="text-align:center">Gap</th>				
+								<th style="text-align:center">No Gap?</th>				
 							</tr>
 						</thead>
 						<tbody>
@@ -804,7 +905,7 @@
 			<div class="row" >          
 				<div class="col-xs-3"></div>                       		
 				<div class="col-xs-6">                        		
-					<div id="dynamic_table_label" style="height:300px; overflow-y:auto">
+					<div id="dynamic_table_label" style="height:300px; overflow-y: auto">
 					</div>
 
 				</div> 

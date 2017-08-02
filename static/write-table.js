@@ -6,7 +6,6 @@ $(window).load(function () {
        		showDirection();
     	}, 2000);			
 	} 
-
 	w3.includeHTML();
 });
 
@@ -74,6 +73,10 @@ function getSourcesDynamic(){
 }
 function writeSourcesDynamic(nodes) {
 	json_data = nodes.sources_nodes_list;
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow_out = parseFloat(json_data[i].flow_out).toFixed(2) 
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}
 	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'flow_out', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
 
@@ -84,6 +87,10 @@ function getCustomersDynamic() {
 
 function writeCustomersDynamic(nodes) {
 	json_data = nodes.customers_nodes_list;	
+	for (i =0; i < json_data.length; i++) {
+		json_data[i].flow_in = parseFloat(json_data[i].flow_in).toFixed(2) 
+		json_data[i].pressure = parseFloat(json_data[i].pressure).toFixed(2) 
+	}
 	create_dynamic_table('#dynamic_table_label', json_data, ['node_id', 'demand', 'flow_in', 'flow_satisfied', 'pressure', 'min_pressure', 'pressure_satisfied']);
 }
 
@@ -417,7 +424,33 @@ function writeTopFiveFlowTable(edges){
 	}
 
 	for (i = 1; i <= top_five_flow_edges_list.length; i++) {
-		d3.select("#top_five_flow-edge_id" + i).text(top_five_flow_edges_list[i-1].edge_id);
+		d3.select("#top_five_flow-edge_id" + i)
+		.text(top_five_flow_edges_list[i-1].edge_id)
+		.on("mouseover", function(d) {
+			d3.select(this)			
+    		.style('background-color', "red");	
+    		
+    		var thisID = d3.select(this).text()
+
+    		d3.select("#graph-canvas").selectAll("line")	
+	    	.filter(function(d) {		    		
+	            return d.edge_id == parseInt(thisID);
+	        })	       
+	        .attr("stroke-width", 100)	     
+	        .attr("stroke", "red");	
+		})
+		.on("mouseout", function(d) {
+			d3.select(this)
+    		.style('background-color', "white");	
+    		var thisID = d3.select(this).text()
+
+    		d3.select("#graph-canvas").selectAll("line")	
+	    	.filter(function(d) {		    		
+	            return d.edge_id == parseInt(thisID);
+	        })	       
+	        .attr("stroke-width", 4)	     
+	        .attr("stroke", "steelblue");						
+		});
 	    d3.select("#top_five_flow-head_id" + i).text(top_five_flow_edges_list[i-1].head_id);
 	    d3.select("#top_five_flow-tail_id" + i).text(top_five_flow_edges_list[i-1].tail_id);
 	    d3.select("#top_five_flow-flow" + i).text(parseFloat(top_five_flow_edges_list[i-1].flow).toFixed(2));	   
@@ -465,9 +498,14 @@ function create_dynamic_table(label_identifier,data, columns) {
 	var table = d3.select(label_identifier).append('table')
 			.style("width", "100%")
 			.attr("class", "table-striped");
+
 	var thead = table.append('thead')
 
+		
+
 	var	tbody = table.append('tbody')
+
+
 	
 	var columns_with_space = new Array(columns.length)
 		for (i = 0; i < columns.length; i++) {
@@ -484,7 +522,7 @@ function create_dynamic_table(label_identifier,data, columns) {
 		.style("padding-top", 10)
 		.style("padding-left",2)
 		.style("text-align", "center")
-		.text(function (column) { return column; });		
+		.text(function (column) { return column; });
 
 		// create a row for each object in the data
 	var rows = tbody.selectAll('tr')
@@ -587,60 +625,5 @@ function create_dynamic_table(label_identifier,data, columns) {
 		 .attr("class", "label label-primary")
 		 .text("junction");
 
-
-	// for (i = 0; i < cells.length; i++) {
-	// 	for (j = 0; j < cells[i].length; j++) {
-	// 		if (cells[i][j].__data__.column == 'valve_status'){
-	// 			if (cells[i][j].__data__.value == 1){
-	// 				cells[i][j].innerHTML = "open"
-	// 				cells[i][j].className ="label-success"
-	// 			} else {
-	// 				cells[i][j].innerHTML = "closed"
-	// 				cells[i][j].className ="label-primary"
-	// 			}
-	// 		}
-
-	// 		if (cells[i][j].__data__.column == 'pressure_satisfied'){
-	// 			if (cells[i][j].__data__.value == 1){
-	// 				cells[i][j].innerHTML = "satisfied"
-	// 			} else {
-	// 				cells[i][j].innerHTML = "no"
-	// 			}
-	// 		}
-
-	// 		if (cells[i][j].__data__.column == 'edge_type'){
-	// 			if (cells[i][j].__data__.value == 1){
-	// 				cells[i][j].innerHTML = "pump"
-	// 				cells[i][j].className ="label-warning"
-	// 			} else if (cells[i][j].__data__.value == 2){
-	// 				cells[i][j].innerHTML = "valve"
-	// 				cells[i][j].className ="label-success"
-	// 			} else {
-	// 				cells[i][j].innerHTML = "pipe"
-	// 				cells[i][j].className ="label-primary"
-	// 			}
-	// 		}
-
-	// 		if (cells[i][j].__data__.column == 'node_type'){
-	// 			if (cells[i][j].__data__.value == 1){
-	// 				cells[i][j].innerHTML = "customer"
-	// 				cells[i][j].className ="label-danger"
-	// 				console.log(cells[i][j])
-	// 			} else if (cells[i][j].__data__.value == 2){
-	// 				cells[i][j].innerHTML = "source"
-	// 				cells[i][j].className ="label-warning"
-	// 			} else if (cells[i][j].__data__.value == 3){
-	// 				cells[i][j].innerHTML = "tank"
-	// 				cells[i][j].className ="label-success"
-	// 			} else {
-	// 				cells[i][j].innerHTML = "junction"
-	// 				cells[i][j].className ="label-primary"
-	// 			}
-	// 		}
-
-	// 	}
-	// }
-
-	return table;
 }
 
