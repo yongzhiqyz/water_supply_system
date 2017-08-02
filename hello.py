@@ -24,11 +24,26 @@ DATA_FOLDER = os.path.join(APP_ROOT, 'data')
 app = Flask(__name__)
 CORS(app)
 
-
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 
 db = SQLAlchemy(app)
+   
+class Network(db.Model):
+    __tablename__ = 'network'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    nodes = relationship('Node', backref='network')
+    edges = relationship('Edge', backref='network')
+    pumps = relationship('Pump', backref='network')
+
+    def __init__(self, name):
+        self.name = name
+
+    @property
+    def serialize(self):
+        return {'id': self.id,
+                'name': self.name}
 
 class Node(db.Model):
     __tablename__ = 'node'
@@ -64,18 +79,6 @@ class Node(db.Model):
                 'x': self.x,
                 'y': self.y,
                 'pressure': self.pressure,
-                'network': self.network.serialize}
-
-    @property
-    def serialize_json(self):
-        return {'node_id': self.node_id,
-                'node_name': self.node_name,
-                'demand': self.demand,
-                'head': self.head,
-                'node_type': self.node_type,
-                'x': self.x,
-                'y': self.y,
-                'pressure': round(self.pressure, 2),
                 'network': self.network.serialize}
 
 class Edge(db.Model):
@@ -118,19 +121,6 @@ class Edge(db.Model):
                 'network': self.network.serialize} 
 
     @property
-    def serialize_json(self):
-        return {'edge_id': self.edge_id,
-                'head_id': self.head_id,
-                'tail_id': self.tail_id,
-                'length': self.length,
-                'diameter': self.diameter,
-                'roughness': self.roughness,
-                'edge_type': self.edge_type,
-                'flow': rouond(self.flow, 2),
-                'gap': round(self.gap, 2),
-                'network': self.network.serialize} 
-
-    @property
     def direction(self):
         return {'edge_id': self.edge_id,
                 'head_id': self.head_id,
@@ -168,24 +158,6 @@ class Pump(db.Model):
                 'y': self.y,
                 'coeff': self.coeff,            
                 'network': self.network.serialize} 
-        
-class Network(db.Model):
-    __tablename__ = 'network'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    nodes = relationship('Node', backref='network')
-    edges = relationship('Edge', backref='network')
-    pumps = relationship('Pump', backref='network')
-
-    def __init__(self, name):
-        self.name = name
-
-    @property
-    def serialize(self):
-        return {'id': self.id,
-                'name': self.name}
-
-
 
 def create_pumps(network, pump_curves):
     for info in pump_curves:
@@ -278,14 +250,14 @@ def create_database():
     toc = time.clock()
     print('Small use time: %f' % (toc-tic))
 
-#    tic = time.clock()  
-#    create_network('Big.inp')
-#    toc = time.clock()
-#    print('Big use time: %f' % (toc-tic))
+    # tic = time.clock()  
+    # create_network('Big.inp')
+    # toc = time.clock()
+    # print('Big use time: %f' % (toc-tic))
 
     db.session.commit()
 
-#shutil.rmtree(DATA_FOLDER)
+# shutil.rmtree(DATA_FOLDER)
 # db.drop_all()
 # create_database()
 
@@ -319,15 +291,15 @@ def get_max_flow(network_id):
     h = load_var(network, 'h')
     obj_flow, q, gap_edge = solve_max_flow(A, L_pump, dh_max, d, h)
     save_var(network, 'q', q)
-    
+
     edges_data = Edge.query.all()
     for i, item in enumerate(gap_edge):
         edges_data[i].gap = item
     db.session.commit()
+
     edges = []
     for i, item in enumerate(q):
         edge = {'edge_id': i + 1, 'flow': item.tolist()[0][0]}
-        
         edges.append(edge)
     return jsonify(obj_flow=obj_flow, edges=edges) 
 
@@ -355,14 +327,14 @@ def get_imaginary_pressure(network_id):
     hc = load_var(network, 'hc')
     pump_head_list = load_var(network, 'pump_head_list')    
     q = load_var(network, 'q')
-    obj_pressure, h, gap_edge = solve_imaginary_pressure(A, L_pump, dh_max, hc, pump_head_list, q)
+    obj_pressure, h, gap_edge  = solve_imaginary_pressure(A, L_pump, dh_max, hc, pump_head_list, q)
     save_var(network, 'h', h)
-    
+
     edges_data = Edge.query.all()
     for i, item in enumerate(gap_edge):
         edges_data[i].gap = item
     db.session.commit()
-        
+
     nodes = []
     for i, item in enumerate(h):
         node = {'node_id': i + 1, 'pressure': item.tolist()[0][0]}
@@ -384,6 +356,10 @@ def get_imaginary_flow_and_pressure(network_id):
     save_var(network, 'h', h)
 
     edges_data = Edge.query.all()
+
+    for i, item in enumerate(gap_edge):
+        edges_data[i].gap = item
+
     edges = []
     for i, item in enumerate(q):
         flow = item.tolist()[0][0]
@@ -398,6 +374,7 @@ def get_imaginary_flow_and_pressure(network_id):
         node = {'node_id': i + 1, 'pressure': pressure}
         nodes_data[i].pressure = pressure
         nodes.append(node)
+
     db.session.commit()
     return jsonify(obj_flow=obj_flow, obj_pressure=obj_pressure, nodes=nodes, edges=edges) 
 
@@ -429,13 +406,11 @@ def get_iterative(network_id, iter):
 
     save_var(network, 'q', q)
     save_var(network, 'h', h)
-    
-    edges_data = Edge.query.all()
-    for i, item in enumerate(gap_edge):
-        edges_data[i].gap = item
-    db.session.commit()
 
     edges_data = Edge.query.all()
+    
+    for i, item in enumerate(gap_edge):
+        edges_data[i].gap = item
     edges = []
     for i, item in enumerate(q):
         flow = item.tolist()[0][0]
@@ -571,10 +546,10 @@ def get_customers_table_info(network):
             pressure_satisfied.append(0)
     return jsonify(customers_nodes_list = [{'node_id': customers_node.node_id,
                                             'demand': customers_node.demand,
-                                            'flow_in':float("{0:.2f}".format(flow_in[i]*(-1000))),                                            
+                                            'flow_in':flow_in[i]*(-1000),                                            
                                             'flow_satisfied': flow_satisfied[i],
                                             'pressure_satisfied': pressure_satisfied[i],
-                                            'pressure': float("{0:.2f}".format(pressure[i])),
+                                            'pressure': pressure[i],
                                             'min_pressure': customers_node.head
                                             } for i, customers_node in enumerate(customers_nodes)])
  
@@ -601,8 +576,8 @@ def get_sources_table_info(network):
         pressure.append(float(h[sources_node.node_id-1]))
         pressure_satisfied.append(1 if (h[sources_node.node_id-1] >= sources_node.head) else 0)
     return jsonify(sources_nodes_list = [{'node_id': sources_node.node_id,
-                                            'flow_out':float("{0:.2f}".format(flow_out[i]*(1000))),                                            
-                                            'pressure': float("{0:.2f}".format(pressure[i])),
+                                            'flow_out': flow_out[i]*(1000),                                            
+                                            'pressure': pressure[i],
                                             'min_pressure': sources_node.head,
                                             'pressure_satisfied': pressure_satisfied[i]
                                             } for i, sources_node in enumerate(sources_nodes)])
@@ -631,7 +606,7 @@ def get_valves_table_info(network):
                                          'head_id': valves_edge.head_id,
                                          'tail_id': valves_edge.tail_id,
                                          'valve_status': valve_status[i],
-                                         'valve_flow': float("{0:.2f}".format(valve_flow[i]))} for i, valves_edge in enumerate(valves_edges)])    
+                                         'valve_flow': valve_flow[i]} for i, valves_edge in enumerate(valves_edges)])    
     
     
 @app.route('/api/five_highest_pressure/<network>')
@@ -653,8 +628,7 @@ def get_five_highest_flow_edes(network):
 def get_five_lowest_flow_edes(network):
     five_lowest_flow_edges = Edge.query.order_by(Edge.flow.asc()).limit(5)    
     return jsonify(json_list = [five_lowest_flow_edge.serialize for five_lowest_flow_edge in five_lowest_flow_edges])
-
-
+       
 if __name__ == "__main__":
-    app.run()    
+	app.run()    
 

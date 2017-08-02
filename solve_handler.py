@@ -79,6 +79,7 @@ def solve_max_flow(A, L1, dh_max, d, hh):
 
     prob=Problem(obj,constraints)
     prob.solve(verbose=True, solver=MOSEK)
+
     qq = q.value
     gap_edge = A.T*hh-np.diag(L1.A1)*np.power(qq,2)+dh_max
 

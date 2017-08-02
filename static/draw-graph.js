@@ -3,9 +3,9 @@ $(window).load(function () {
 	// initialize(state);	
 });
 
-var width = 800,
-    height = 600,
-    margin = 30;
+var width = 750,
+    height = 500,
+    margin = 10;
 var JUNCTION = 0,
     CONSUMER = 1,
     SOURCE = 2,
@@ -254,7 +254,7 @@ function initialize(name) {
         .await(render);
 }
 
-function predirection() {
+function getNewDirection() {
     var url_direction = "/api/predirection/" + state;
     d3.json(url_direction, function(info) {
         // console.log(edges[0]);
