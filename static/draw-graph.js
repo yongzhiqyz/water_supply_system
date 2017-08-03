@@ -1,8 +1,3 @@
-$(window).load(function () {
-	console.log('jojojoojojjo')	
-	// initialize(state);	
-});
-
 var width = 750,
     height = 500,
     margin = 10;
@@ -256,11 +251,9 @@ function initialize(name) {
 
 function getNewDirection() {
     var url_direction = "/api/predirection/" + state;
-    d3.json(url_direction, function(info) {
-        // console.log(edges[0]);
-        edges = _.merge(edges, info.json_list);
-        // console.log(edges[0]);
-        // showDirection(info.json_list);
+    d3.json(url_direction, function(info) {        
+        edges = _.merge(edges, info.json_list); 
+        document.getElementById("imaginary-button").classList.remove("disabled");       
     });
 }
 
@@ -290,9 +283,6 @@ function showDirection() {
 }
 
 function update(error, info) {
-    info.edges.forEach(function(d) {
-        d.flow = d.flow * 1000
-    })
     nodes = _.merge(nodes, info.nodes);
     edges = _.merge(edges, info.edges);
 
@@ -325,6 +315,7 @@ function update(error, info) {
         });
 
     updateTable();
+    document.getElementById("iteration-button").classList.remove("disabled"); 
 
 }
 
@@ -352,9 +343,7 @@ function update_node(error, info) {
 }
 
 function update_edge(error, info) {
-    info.edges.forEach(function(d) {
-        d.flow = d.flow * 1000
-    })
+
     edges = _.merge(edges, info.edges);
 
     d3.select("#graph-canvas").selectAll("line")

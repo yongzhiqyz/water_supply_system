@@ -6,8 +6,15 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA_FOLDER = os.path.join(APP_ROOT, 'data')
 
 GRAVITY = 9.8
+
+JUNCTION = 0
+CUSTOMER = 1
 SOURCE = 2
+TANK = 3
+
+PIPE = 0
 PUMP = 1
+VALVE = 2
 
 
 def read_inp(file):
@@ -252,7 +259,6 @@ def post_process_pumps(pumps, edges):
         # Match pump with edge
         for edge in pump_edges:
             if edge['head_id'] == pump_info['head_id'] and edge['tail_id'] == pump_info['tail_id']:
-                #				pump_info['edge_id'] = edge['edge_id']
                 pump_info['edge_id'] = edge['edge_id']  # modified
 
     return [pump_info for pump_info in pump_curve.values()]
@@ -312,7 +318,11 @@ def load_var(network, filename):
     network_var_dir = get_var_dir(network)
     path = os.path.join(network_var_dir, filename)
     path += '.npy'
-    return np.load(path)
+    try:
+        output = np.load(path)
+    except IOError:
+        output = None
+    return output
 
 
 def get_var_dir(network):
